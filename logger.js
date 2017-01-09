@@ -8,7 +8,7 @@ module.exports = function(request, response, next){
 		var duration = +new Date() - start;
 		message = method + ' to ' + url + '\ntook ' + duration + ' ms \n\n';
 		//Message in console
-		stream.write(message);
+		console.log(message);
 	});
         
         
