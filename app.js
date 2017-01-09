@@ -1,6 +1,9 @@
 var express = require('express');
 var app = express();
 
+var bodyParser = require('body-parser');
+var parseUrlencoded = bodyParser.urlencoded({ extended: false });
+
 var logger = require('./logger');
 app.use(logger);
 
@@ -21,6 +24,13 @@ var blocks = {
 var locations = {
         'Fixed' : 'First Floor', 'Movable': 'Second Floor', 'Rotating': 'Penthouse'
 };
+
+app.post('/blocks', parseUrlencoded, function(request, response){
+        var newBlock = request.body;
+        blocks[newBlock.name] = newBlock.description;
+        
+        response.status(201).json(newBlock.name);
+        });
 
 app.param('name', function(request, response, next){
         var name = request.params.name;
