@@ -1,10 +1,14 @@
 var express = require('express');
 var app = express();
+app.use(express.static('public'));
 
-var bodyParser = require('body-parser');
-var parseUrlencoded = bodyParser.urlencoded({ extended: false });
+var blocks = require('./routes/blocks');
+app.use('/blocks', blocks);
 
 var logger = require('./logger');
+
+//var blocksRoute = app.route('/blocks');
+
 app.use(logger);
 
 //app.get ('/', function(request, response){
@@ -13,49 +17,21 @@ app.use(logger);
 //        response.sendFile( + '/public/index.html');
 //        });
         
-app.use(express.static('public'));
 
-var blocks = {
-        'Fixed': 'Fastened securely in position',
-        'Movable': 'Capable of being moved',
-        'Rotating': 'Moving in a circle'
-};
+
+
 
 var locations = {
         'Fixed' : 'First Floor', 'Movable': 'Second Floor', 'Rotating': 'Penthouse'
 };
 
-app.delete('/blocks/:name', function(request, response){
-        delete blocks[request.blockName];
-        response.sendStatus(200);
-        });
 
-app.post('/blocks', parseUrlencoded, function(request, response){
-        var newBlock = request.body;
-        blocks[newBlock.name] = newBlock.description;
-        
-        response.status(201).json(newBlock.name);
-        });
 
-app.param('name', function(request, response, next){
-        var name = request.params.name;
-        var block = name[0].toUpperCase() + name.slice(1).toLowerCase();
-        
-        request.blockName = block;
-        next();
-        });
+//app.route('/blocks')
 
-app.get ('/blocks/:name', function(request, response){
-        //var name = request.params.name;
-        //var block = name[0].toUpperCase() + name.slice(1).toLowerCase();
-        var description = blocks[request.blockName];
-        if(!description){
-                response.status(404).json('No description found for ' + request.params.none);
-        }else{
-                response.json(description);
-        }
+//app.route('/blocks/:name')
 
-        });
+
 
 app.get('/locations/:name', function(request, response){
         var location = locations[request.blockName];
@@ -66,16 +42,7 @@ app.get('/locations/:name', function(request, response){
         }
         });
 
-app.get ('/blocks', function(request, response){
-        //var blocks = ['Fixed', 'Movable', 'Rotating'];
-        //if(request.query.limit >= 0){
-        //        response.json(blocks.slice(0, request.query.limit));
-        //}else{
-                       response.json(Object.keys(blocks));
-        //response.redirect(301, '/parts'); 
-        //}
-//
-        });
+
 
 app.listen(3000, function(){
         console.log('Listening on port 3000');
